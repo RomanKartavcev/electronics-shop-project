@@ -1,9 +1,12 @@
+import csv
+
+
 class Item:
     """
     Класс для представления товара в магазине.
     """
     pay_rate = 1.0
-    all = [ ]
+    all = []
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
@@ -12,21 +15,51 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
-        self.name = name
+        self.__name = name
         self.price = price
         self.quantity = quantity
-        self.all.append(int((self.price * self.pay_rate) * self.quantity))
+        self.all.append(self)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value):
+        if len(value) > 10:
+            raise ValueError("Наименование товара не может быть больше 10 символов")
+        self.__name = value
 
     def calculate_total_price(self) -> float:
         """
         Рассчитывает общую стоимость конкретного товара в магазине.
         :return: Общая стоимость товара.
         """
-        total_price = self.price * self.quantity
-        return total_price
+        return self.price * self.quantity
 
     def apply_discount(self) -> None:
         """
         Применяет установленную скидку для конкретного товара.
         """
-        self.price = self.price * self.pay_rate
+        self.price *= self.pay_rate
+
+    @classmethod
+    def instantiate_from_csv(cls):
+        cls.all = []
+        with open('../src/items.csv', encoding='UTF16') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                name = row['name']
+                price = cls.string_to_number(row['price'])
+                quantity = int(row['quantity'])
+                cls(name, price, quantity)
+
+    @staticmethod
+    def string_to_number(string):
+        return int(float(string)) if '.' in string else int(string)
+
+    def __repr__(self):
+        return f"Item('{self.name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        return self.name
