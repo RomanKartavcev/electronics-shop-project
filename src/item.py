@@ -1,6 +1,7 @@
 import csv
 
 
+# noinspection PyTypeChecker
 class Item:
     """
     Класс для представления товара в магазине.
@@ -46,7 +47,7 @@ class Item:
     @classmethod
     def instantiate_from_csv(cls):
         cls.all = []
-        with open('../src/items.csv', encoding='UTF16') as csvfile:
+        with open('../src/items.csv', encoding='windows-1251') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 name = row['name']
