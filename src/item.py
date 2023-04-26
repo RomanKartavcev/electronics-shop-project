@@ -2,7 +2,6 @@ import csv
 import os
 
 
-# noinspection PyTypeChecker
 class Item:
     """
     Класс для представления товара в магазине.
@@ -46,9 +45,11 @@ class Item:
         self.price *= self.pay_rate
 
     @classmethod
-    def instantiate_from_csv(cls):
-        cls.all = []
-        with open('../src/items.csv',newline='', encoding='cp1251') as csvfile:
+    def instantiate_from_csv(cls) -> None:
+        """
+        Инициализирует все товара из файла csv.
+        """
+        with open('../src/item.csv', newline='', encoding='cp1251') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 name = row['name']
@@ -61,7 +62,11 @@ class Item:
         return int(float(string)) if '.' in string else int(string)
 
     def __repr__(self):
-        return f"Item('{self.name}', {self.price}, {self.quantity})"
+        return f"{self.__class__.__name__}('{self.name}', {self.price}, {self.quantity})"
 
     def __str__(self):
         return self.name
+
+    def __add__(self, other):
+        if issubclass(other.__class__, self.__class__):
+            return self.quantity + other.quantity
